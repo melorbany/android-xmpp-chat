@@ -491,7 +491,8 @@ public class MessageAdapter extends ArrayAdapter<Message> {
 			} else {
 				displayInfoMessage(viewHolder, UIHelper.getMessagePreview(activity, message).first);
 			}
-		} else if (message.getType() == Message.TYPE_IMAGE && message.getEncryption() != Message.ENCRYPTION_PGP && message.getEncryption() != Message.ENCRYPTION_DECRYPTION_FAILED) {
+		} else if ((message.getType() == Message.TYPE_IMAGE || message.getContainer() == Message.TYPE_IMAGE) && message.getEncryption() != Message.ENCRYPTION_PGP
+                && message.getEncryption() != Message.ENCRYPTION_DECRYPTION_FAILED) {
 			displayImageMessage(viewHolder, message);
 		} else if (message.getType() == Message.TYPE_FILE && message.getEncryption() != Message.ENCRYPTION_PGP && message.getEncryption() != Message.ENCRYPTION_DECRYPTION_FAILED) {
 			if (message.getImageParams().width > 0) {

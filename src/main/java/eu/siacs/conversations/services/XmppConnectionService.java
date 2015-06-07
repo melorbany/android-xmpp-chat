@@ -390,8 +390,12 @@ public class XmppConnectionService extends Service implements OnPhoneContactsLoa
 					conversation.getNextEncryption(forceEncryption()));
 		}
 		message.setCounterpart(conversation.getNextCounterpart());
-		message.setType(Message.TYPE_IMAGE);
-		new Thread(new Runnable() {
+		message.setType(Message.TYPE_TEXT);
+        message.setContainer(Message.TYPE_IMAGE);
+
+
+
+        new Thread(new Runnable() {
 
 			@Override
 			public void run() {
@@ -407,6 +411,8 @@ public class XmppConnectionService extends Service implements OnPhoneContactsLoa
 				}
 			}
 		}).start();
+
+
 	}
 
 	public Conversation find(Bookmark bookmark) {
@@ -2527,4 +2533,7 @@ public class XmppConnectionService extends Service implements OnPhoneContactsLoa
 			return XmppConnectionService.this;
 		}
 	}
+
+
+
 }

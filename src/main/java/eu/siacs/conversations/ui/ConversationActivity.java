@@ -10,12 +10,15 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.IntentSender.SendIntentException;
+import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.widget.SlidingPaneLayout;
 import android.support.v4.widget.SlidingPaneLayout.PanelSlideListener;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,12 +31,27 @@ import android.widget.PopupMenu.OnMenuItemClickListener;
 import android.widget.Toast;
 
 import net.java.otr4j.session.SessionStatus;
-import de.timroes.android.listview.EnhancedListView;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
+import de.timroes.android.listview.EnhancedListView;
+import eu.siacs.conversations.Config;
 import eu.siacs.conversations.R;
 import eu.siacs.conversations.entities.Blockable;
 import eu.siacs.conversations.entities.Contact;
@@ -1113,7 +1131,7 @@ public class ConversationActivity extends XmppActivity
 		});
 	}
 
-	private void attachImageToConversation(Conversation conversation, Uri uri) {
+	private void attachImageToConversation(Conversation conversation,final Uri uri) {
 		prepareFileToast = Toast.makeText(getApplicationContext(),
 				getText(R.string.preparing_image), Toast.LENGTH_LONG);
 		prepareFileToast.show();
@@ -1128,7 +1146,10 @@ public class ConversationActivity extends XmppActivity
 
 					@Override
 					public void success(Message message) {
-						xmppConnectionService.sendMessage(message);
+
+                        String path = getRealPathFromURI(uri);
+                        uploadFile(path, message);
+
 					}
 
 					@Override
@@ -1264,4 +1285,110 @@ public class ConversationActivity extends XmppActivity
 	public boolean enterIsSend() {
 		return getPreferences().getBoolean("enter_is_send",false);
 	}
+
+
+    private String uploadFile(final String filePath,final Message message) {
+
+        AsyncTask<Void, Integer, String> task = new AsyncTask<Void, Integer, String>() {
+
+            /**
+             * progress dialog to show user that the backup is processing.
+             */
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+            }
+
+            @Override
+            protected void onProgressUpdate(Integer... progress) {
+            }
+
+            @Override
+            protected String doInBackground(Void... params) {
+                return uploadFile();
+            }
+
+            @SuppressWarnings("deprecation")
+            private String uploadFile() {
+                String responseString = null;
+
+                HttpClient httpclient = new DefaultHttpClient();
+                HttpPost httppost = new HttpPost(Message.FILE_UPLOAD_URL);
+
+                try {
+                    MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+                    builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+
+                    //Upload file
+                    FileBody fb = null;
+                    fb = new FileBody(new File(filePath));
+
+                    builder.addPart("file", fb);
+                    final HttpEntity builderEntity = builder.build();
+                    httppost.setEntity(builderEntity);
+
+                    // Making server call
+                    HttpResponse response = httpclient.execute(httppost);
+                    HttpEntity r_entity = response.getEntity();
+
+                    int statusCode = response.getStatusLine().getStatusCode();
+                    if (statusCode == 200) {
+                        // Server response
+                        responseString = EntityUtils.toString(r_entity);
+                    } else {
+                        responseString = "Error Status Code: "
+                                + statusCode;
+                    }
+
+                } catch (ClientProtocolException e) {
+                    responseString = e.toString();
+                } catch (IOException e) {
+                    responseString = e.toString();
+                } catch (Exception e) {
+                    responseString = e.toString();
+                }
+
+                Log.d(Config.LOGTAG, "Response From Server " + responseString);
+
+                return responseString;
+            }
+
+            @Override
+            protected void onPostExecute(String result) {
+                message.setBody(result);
+                xmppConnectionService.sendMessage(message);
+            }
+
+
+        };
+
+        task.execute();
+        try {
+            return task.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        return "";
+    }
+
+
+    private String getRealPathFromURI(Uri contentURI) {
+        String result;
+        Cursor cursor = getContentResolver().query(contentURI, null, null, null, null);
+        if (cursor == null) { // Source is Dropbox or other similar local file path
+            result = contentURI.getPath();
+        } else {
+            cursor.moveToFirst();
+            int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+            result = cursor.getString(idx);
+            cursor.close();
+        }
+        return result;
+    }
+
+
 }

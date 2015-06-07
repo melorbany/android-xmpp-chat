@@ -1,5 +1,12 @@
 package eu.siacs.conversations.persistance;
 
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteCantOpenDatabaseException;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -12,13 +19,6 @@ import eu.siacs.conversations.entities.Message;
 import eu.siacs.conversations.entities.Roster;
 import eu.siacs.conversations.xmpp.jid.InvalidJidException;
 import eu.siacs.conversations.xmpp.jid.Jid;
-
-import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteCantOpenDatabaseException;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 public class DatabaseBackend extends SQLiteOpenHelper {
 
@@ -64,7 +64,8 @@ public class DatabaseBackend extends SQLiteOpenHelper {
 		db.execSQL("create table " + Message.TABLENAME + "( " + Message.UUID
 				+ " TEXT PRIMARY KEY, " + Message.CONVERSATION + " TEXT, "
 				+ Message.TIME_SENT + " NUMBER, " + Message.COUNTERPART
-				+ " TEXT, " + Message.TRUE_COUNTERPART + " TEXT,"
+				+ " TEXT, " + Message.TRUE_COUNTERPART + " TEXT, " + Message.TRUE_COUNTERPART +" TEXT,"
+
 				+ Message.BODY + " TEXT, " + Message.ENCRYPTION + " NUMBER, "
 				+ Message.STATUS + " NUMBER," + Message.TYPE + " NUMBER, "
 				+ Message.RELATIVE_FILE_PATH + " TEXT, "

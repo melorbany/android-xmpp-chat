@@ -42,7 +42,8 @@ public class Message extends AbstractEntity {
 
 	public static final String CONVERSATION = "conversationUuid";
 	public static final String COUNTERPART = "counterpart";
-	public static final String TRUE_COUNTERPART = "trueCounterpart";
+    public static final String TRUE_COUNTERPART = "trueCounterpart";
+    public static final String TRUE_COUNTERPART = "trueCounterpart";
 	public static final String BODY = "body";
 	public static final String TIME_SENT = "timeSent";
 	public static final String ENCRYPTION = "encryption";
@@ -52,6 +53,7 @@ public class Message extends AbstractEntity {
 	public static final String SERVER_MSG_ID = "serverMsgId";
 	public static final String RELATIVE_FILE_PATH = "relativeFilePath";
 	public static final String ME_COMMAND = "/me ";
+    public static final String FILE_UPLOAD_URL = "http://178.62.223.220/api/v1/new";
 
 
 	public boolean markable = false;
@@ -64,6 +66,7 @@ public class Message extends AbstractEntity {
 	protected int encryption;
 	protected int status;
 	protected int type;
+    protected int container;
 	protected String relativeFilePath;
 	protected boolean read = true;
 	protected String remoteMsgId = null;
@@ -303,7 +306,15 @@ public class Message extends AbstractEntity {
 		this.type = type;
 	}
 
-	public void setTrueCounterpart(Jid trueCounterpart) {
+    public int getContainer() {
+        return container;
+    }
+
+    public void setContainer(int container) {
+        this.container = container;
+    }
+
+    public void setTrueCounterpart(Jid trueCounterpart) {
 		this.trueCounterpart = trueCounterpart;
 	}
 
