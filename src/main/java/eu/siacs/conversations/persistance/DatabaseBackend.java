@@ -64,10 +64,9 @@ public class DatabaseBackend extends SQLiteOpenHelper {
 		db.execSQL("create table " + Message.TABLENAME + "( " + Message.UUID
 				+ " TEXT PRIMARY KEY, " + Message.CONVERSATION + " TEXT, "
 				+ Message.TIME_SENT + " NUMBER, " + Message.COUNTERPART
-				+ " TEXT, " + Message.TRUE_COUNTERPART + " TEXT, " + Message.TRUE_COUNTERPART +" TEXT,"
-
+				+ " TEXT, " + Message.TRUE_COUNTERPART + " TEXT, " + Message.IMAGE_PARAMS +" TEXT,"
 				+ Message.BODY + " TEXT, " + Message.ENCRYPTION + " NUMBER, "
-				+ Message.STATUS + " NUMBER," + Message.TYPE + " NUMBER, "
+				+ Message.STATUS + " NUMBER," + Message.TYPE +" NUMBER," + Message.CONTAINER + " NUMBER, "
 				+ Message.RELATIVE_FILE_PATH + " TEXT, "
 				+ Message.SERVER_MSG_ID + " TEXT, "
 				+ Message.REMOTE_MSG_ID + " TEXT, FOREIGN KEY("

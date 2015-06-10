@@ -1,5 +1,19 @@
 package eu.siacs.conversations.persistance;
 
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.RectF;
+import android.net.Uri;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.util.Base64;
+import android.util.Base64OutputStream;
+import android.util.Log;
+import android.webkit.MimeTypeMap;
+
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
@@ -15,20 +29,6 @@ import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Matrix;
-import android.graphics.RectF;
-import android.net.Uri;
-import android.os.Environment;
-import android.provider.MediaStore;
-import android.util.Base64;
-import android.util.Base64OutputStream;
-import android.util.Log;
-import android.webkit.MimeTypeMap;
 
 import eu.siacs.conversations.Config;
 import eu.siacs.conversations.R;
@@ -62,7 +62,10 @@ public class FileBackend {
 			String[] parts = path.split("\\.");
 			extension = "."+parts[parts.length - 1];
 		} else {
-			if (message.getType() == Message.TYPE_IMAGE || message.getType() == Message.TYPE_TEXT) {
+            if(message.getContainer()==Message.TYPE_IMAGE){
+                extension = ".jpeg";
+            }
+			else if (message.getType() == Message.TYPE_IMAGE || message.getType() == Message.TYPE_TEXT) {
 				extension = ".webp";
 			} else {
 				extension = "";
@@ -209,7 +212,7 @@ public class FileBackend {
 				scaledBitmap = rotate(scaledBitmap, rotation);
 			}
 
-			boolean success = scaledBitmap.compress(Bitmap.CompressFormat.WEBP, 75, os);
+			boolean success = scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 75, os);
 			if (!success) {
 				throw new FileCopyException(R.string.error_compressing_image);
 			}
@@ -217,7 +220,7 @@ public class FileBackend {
 			long size = file.getSize();
 			int width = scaledBitmap.getWidth();
 			int height = scaledBitmap.getHeight();
-			message.setBody(Long.toString(size) + ',' + width + ',' + height);
+			message.setImageParamsBody(Long.toString(size) + ',' + width + ',' + height);
 			return file;
 		} catch (FileNotFoundException e) {
 			throw new FileCopyException(R.string.error_file_not_found);

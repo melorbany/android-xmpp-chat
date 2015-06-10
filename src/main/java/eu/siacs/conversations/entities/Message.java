@@ -43,23 +43,28 @@ public class Message extends AbstractEntity {
 	public static final String CONVERSATION = "conversationUuid";
 	public static final String COUNTERPART = "counterpart";
     public static final String TRUE_COUNTERPART = "trueCounterpart";
-    public static final String TRUE_COUNTERPART = "trueCounterpart";
+    public static final String IMAGE_PARAMS = "imageParams";
 	public static final String BODY = "body";
 	public static final String TIME_SENT = "timeSent";
 	public static final String ENCRYPTION = "encryption";
 	public static final String STATUS = "status";
 	public static final String TYPE = "type";
-	public static final String REMOTE_MSG_ID = "remoteMsgId";
+    public static final String CONTAINER = "container";
+    public static final String REMOTE_MSG_ID = "remoteMsgId";
 	public static final String SERVER_MSG_ID = "serverMsgId";
 	public static final String RELATIVE_FILE_PATH = "relativeFilePath";
 	public static final String ME_COMMAND = "/me ";
+    public static final String IMG_COMMAND = "/img ";
     public static final String FILE_UPLOAD_URL = "http://178.62.223.220/api/v1/new";
+    public static final String FILE_DOWNLOAD_URL = "http://178.62.223.220/files/";
 
 
-	public boolean markable = false;
+
+    public boolean markable = false;
 	protected String conversationUuid;
 	protected Jid counterpart;
 	protected Jid trueCounterpart;
+    protected String imageParamsBody;
 	protected String body;
 	protected String encryptedBody;
 	protected long timeSent;
@@ -84,7 +89,7 @@ public class Message extends AbstractEntity {
 		this(conversation, body, encryption, STATUS_UNSEND);
 	}
 
-	public Message(Conversation conversation, String body, int encryption, int status) {
+	public Message(Conversation conversation,String body, int encryption, int status) {
 		this(java.util.UUID.randomUUID().toString(),
 				conversation.getUuid(),
 				conversation.getJid() == null ? null : conversation.getJid().toBareJid(),
@@ -141,18 +146,23 @@ public class Message extends AbstractEntity {
 		} catch (InvalidJidException e) {
 			trueCounterpart = null;
 		}
-		return new Message(cursor.getString(cursor.getColumnIndex(UUID)),
+		Message message =  new Message(cursor.getString(cursor.getColumnIndex(UUID)),
 				cursor.getString(cursor.getColumnIndex(CONVERSATION)),
 				jid,
 				trueCounterpart,
-				cursor.getString(cursor.getColumnIndex(BODY)),
+                cursor.getString(cursor.getColumnIndex(BODY)),
 				cursor.getLong(cursor.getColumnIndex(TIME_SENT)),
 				cursor.getInt(cursor.getColumnIndex(ENCRYPTION)),
 				cursor.getInt(cursor.getColumnIndex(STATUS)),
 				cursor.getInt(cursor.getColumnIndex(TYPE)),
-				cursor.getString(cursor.getColumnIndex(REMOTE_MSG_ID)),
+                cursor.getString(cursor.getColumnIndex(REMOTE_MSG_ID)),
 				cursor.getString(cursor.getColumnIndex(RELATIVE_FILE_PATH)),
 				cursor.getString(cursor.getColumnIndex(SERVER_MSG_ID)));
+
+
+        message.setContainer(cursor.getInt(cursor.getColumnIndex(CONTAINER)));
+        message.setImageParamsBody(cursor.getString(cursor.getColumnIndex(IMAGE_PARAMS)));
+        return message;
 	}
 
 	public static Message createStatusMessage(Conversation conversation, String body) {
@@ -178,11 +188,14 @@ public class Message extends AbstractEntity {
 		} else {
 			values.put(TRUE_COUNTERPART, trueCounterpart.toString());
 		}
-		values.put(BODY, body);
+
+        values.put(IMAGE_PARAMS, imageParamsBody);
+        values.put(BODY, body);
 		values.put(TIME_SENT, timeSent);
 		values.put(ENCRYPTION, encryption);
 		values.put(STATUS, status);
 		values.put(TYPE, type);
+        values.put(CONTAINER, container);
 		values.put(REMOTE_MSG_ID, remoteMsgId);
 		values.put(RELATIVE_FILE_PATH, relativeFilePath);
 		values.put(SERVER_MSG_ID, serverMsgId);
@@ -222,7 +235,15 @@ public class Message extends AbstractEntity {
 		}
 	}
 
-	public String getBody() {
+    public String getImageParamsBody() {
+        return imageParamsBody;
+    }
+
+    public void setImageParamsBody(String imageParamsBody) {
+        this.imageParamsBody = imageParamsBody;
+    }
+
+    public String getBody() {
 		return body;
 	}
 
@@ -418,6 +439,13 @@ public class Message extends AbstractEntity {
 		return getMergedBody().startsWith(ME_COMMAND);
 	}
 
+    public int getRecMessageContainer() {
+        if(getMergedBody().startsWith(IMG_COMMAND))
+            return TYPE_IMAGE;
+
+        return TYPE_TEXT;
+    }
+
 	public int getMergedStatus() {
 		final Message next = this.next();
 		if (this.mergeable(next)) {
@@ -451,7 +479,12 @@ public class Message extends AbstractEntity {
 		 * "http://example.com/image.jpg text that will not be shown /abc.png"
 		 * or more than one image link in one message.
 		 */
-		if (body.trim().contains(" ")) {
+
+        if (body.trim().contains(IMG_COMMAND)) {
+            setType(TYPE_IMAGE);
+            return true;
+        }
+		else if (body.trim().contains(" ")) {
 			return false;
 		}
 		try {
@@ -503,10 +536,10 @@ public class Message extends AbstractEntity {
 		if (this.downloadable != null) {
 			params.size = this.downloadable.getFileSize();
 		}
-		if (body == null) {
+		if (imageParamsBody == null) {
 			return params;
 		}
-		String parts[] = body.split("\\|");
+		String parts[] = imageParamsBody.split("\\|");
 		if (parts.length == 1) {
 			try {
 				params.size = Long.parseLong(parts[0]);
@@ -562,10 +595,10 @@ public class Message extends AbstractEntity {
 
 	public ImageParams getLegacyImageParams() {
 		ImageParams params = new ImageParams();
-		if (body == null) {
+		if (imageParamsBody == null) {
 			return params;
 		}
-		String parts[] = body.split(",");
+		String parts[] = imageParamsBody.split(",");
 		if (parts.length == 3) {
 			try {
 				params.size = Long.parseLong(parts[0]);

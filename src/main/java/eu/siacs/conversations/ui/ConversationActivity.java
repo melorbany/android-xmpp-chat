@@ -1324,6 +1324,9 @@ public class ConversationActivity extends XmppActivity
                     FileBody fb = null;
                     fb = new FileBody(new File(filePath));
 
+                    File file = xmppConnectionService.getFileBackend().getFile(message);
+                    fb = new FileBody(file);
+
                     builder.addPart("file", fb);
                     final HttpEntity builderEntity = builder.build();
                     httppost.setEntity(builderEntity);
@@ -1356,7 +1359,7 @@ public class ConversationActivity extends XmppActivity
 
             @Override
             protected void onPostExecute(String result) {
-                message.setBody(result);
+                message.setBody(Message.IMG_COMMAND + result);
                 xmppConnectionService.sendMessage(message);
             }
 
