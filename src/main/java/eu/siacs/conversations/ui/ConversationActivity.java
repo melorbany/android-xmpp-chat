@@ -1359,7 +1359,9 @@ public class ConversationActivity extends XmppActivity
 
             @Override
             protected void onPostExecute(String result) {
-                message.setBody(Message.IMG_COMMAND + result);
+
+                String newBody = message.getBody()+","+Message.IMG_COMMAND + result;
+                message.setBody(newBody);
                 xmppConnectionService.sendMessage(message);
             }
 

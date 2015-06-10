@@ -220,7 +220,7 @@ public class FileBackend {
 			long size = file.getSize();
 			int width = scaledBitmap.getWidth();
 			int height = scaledBitmap.getHeight();
-			message.setImageParamsBody(Long.toString(size) + ',' + width + ',' + height);
+			message.setBody(Long.toString(size) + ',' + width + ',' + height);
 			return file;
 		} catch (FileNotFoundException e) {
 			throw new FileCopyException(R.string.error_file_not_found);

@@ -67,7 +67,13 @@ public class HttpConnection implements Downloadable {
 		this.message.setDownloadable(this);
 		try {
 
-            String formattedUrl = message.getBody().replaceAll(Message.IMG_COMMAND,"");
+            String formattedUrl="";
+            String imgParts[] = message.getBody().split(",");
+            if (imgParts.length >3) {
+                formattedUrl = imgParts[3].replaceAll(Message.IMG_COMMAND, "");
+            }
+            else  formattedUrl = imgParts[0].replaceAll(Message.IMG_COMMAND, "");
+
             formattedUrl = Message.FILE_DOWNLOAD_URL + formattedUrl;
 			mUrl = new URL(formattedUrl);
 

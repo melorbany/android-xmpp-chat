@@ -536,10 +536,10 @@ public class Message extends AbstractEntity {
 		if (this.downloadable != null) {
 			params.size = this.downloadable.getFileSize();
 		}
-		if (imageParamsBody == null) {
+		if (body == null) {
 			return params;
 		}
-		String parts[] = imageParamsBody.split("\\|");
+		String parts[] = body.split("\\|");
 		if (parts.length == 1) {
 			try {
 				params.size = Long.parseLong(parts[0]);
@@ -551,19 +551,19 @@ public class Message extends AbstractEntity {
 					params.url = null;
 				}
 			}
-		} else if (parts.length == 3) {
+		} else if (parts.length > 3) {
 			try {
-				params.size = Long.parseLong(parts[0]);
+				params.size = Long.parseLong(parts[1]);
 			} catch (NumberFormatException e) {
 				params.size = 0;
 			}
 			try {
-				params.width = Integer.parseInt(parts[1]);
+				params.width = Integer.parseInt(parts[2]);
 			} catch (NumberFormatException e) {
 				params.width = 0;
 			}
 			try {
-				params.height = Integer.parseInt(parts[2]);
+				params.height = Integer.parseInt(parts[3]);
 			} catch (NumberFormatException e) {
 				params.height = 0;
 			}
@@ -595,11 +595,11 @@ public class Message extends AbstractEntity {
 
 	public ImageParams getLegacyImageParams() {
 		ImageParams params = new ImageParams();
-		if (imageParamsBody == null) {
+		if (body == null) {
 			return params;
 		}
-		String parts[] = imageParamsBody.split(",");
-		if (parts.length == 3) {
+		String parts[] = body.split(",");
+		if (parts.length >= 3) {
 			try {
 				params.size = Long.parseLong(parts[0]);
 			} catch (NumberFormatException e) {
