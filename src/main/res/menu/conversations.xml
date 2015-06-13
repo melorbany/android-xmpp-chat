@@ -11,7 +11,8 @@
         android:icon="?attr/icon_not_secure"
         android:orderInCategory="20"
         android:showAsAction="always"
-        android:title="@string/action_secure"/>
+        android:title="@string/action_secure"
+        android:visible="false"/>
     <item
         android:id="@+id/action_attach_file"
         android:icon="?attr/icon_new_attachment"
@@ -65,6 +66,7 @@
         android:id="@+id/action_settings"
         android:orderInCategory="100"
         android:showAsAction="never"
-        android:title="@string/action_settings"/>
+        android:title="@string/action_settings"
+        android:visible="false"/>
 
 </menu>

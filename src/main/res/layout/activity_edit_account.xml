@@ -80,7 +80,8 @@
                     android:layout_marginTop="8dp"
                     android:text="@string/register_account"
                     android:textColor="@color/primarytext"
-                    android:textSize="?attr/TextSizeBody" />
+                    android:textSize="?attr/TextSizeBody"
+                    android:visibility="gone"/>
 
                 <TextView
                     android:id="@+id/account_confirm_password_desc"

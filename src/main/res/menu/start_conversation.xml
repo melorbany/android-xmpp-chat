@@ -20,7 +20,8 @@
     <item
         android:id="@+id/action_scan_qr_code"
         android:showAsAction="never"
-        android:title="@string/scan_qr_code" />
+        android:title="@string/scan_qr_code"
+        android:visible="false"/>
 
     <item
         android:id="@+id/action_hide_offline"
@@ -28,16 +29,19 @@
         android:checked="false"
         android:orderInCategory="85"
         android:showAsAction="never"
-        android:title="@string/hide_offline"/>
+        android:title="@string/hide_offline"
+        android:visible="false"/>
     <item
         android:id="@+id/action_accounts"
         android:orderInCategory="90"
         android:showAsAction="never"
-        android:title="@string/action_accounts" />
+        android:title="@string/action_accounts"
+        android:visible="false"/>
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
         android:showAsAction="never"
-        android:title="@string/action_settings" />
+        android:title="@string/action_settings"
+        android:visible="false"/>
 
 </menu>
