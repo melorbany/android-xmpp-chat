@@ -415,6 +415,35 @@ public class XmppConnectionService extends Service implements OnPhoneContactsLoa
 
 	}
 
+    public void attachVideoToConversation(final Conversation conversation,
+                                          final Uri uri, final UiCallback<Message> callback) {
+        final Message message;
+        if (conversation.getNextEncryption(forceEncryption()) == Message.ENCRYPTION_PGP) {
+            message = new Message(conversation, "",
+                    Message.ENCRYPTION_DECRYPTED);
+        } else {
+            message = new Message(conversation, "",
+                    conversation.getNextEncryption(forceEncryption()));
+        }
+        message.setCounterpart(conversation.getNextCounterpart());
+        message.setType(Message.TYPE_TEXT);
+        message.setContainer(Message.TYPE_VIDEO);
+
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+//                    getFileBackend().copyImageToPrivateStorage(message, uri);
+                    if (conversation.getNextEncryption(forceEncryption()) == Message.ENCRYPTION_PGP) {
+                        getPgpEngine().encrypt(message, callback);
+                    } else {
+                        callback.success(message);
+                    }
+            }
+        }).start();
+
+
+    }
 	public Conversation find(Bookmark bookmark) {
 		return find(bookmark.getAccount(), bookmark.getJid());
 	}
