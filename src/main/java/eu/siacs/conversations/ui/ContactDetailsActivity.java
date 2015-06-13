@@ -291,14 +291,14 @@ public class ContactDetailsActivity extends XmppActivity implements OnAccountUpd
 				send.setText(R.string.send_presence_updates);
 				send.setChecked(true);
 			} else if (contact.getOption(Contact.Options.PENDING_SUBSCRIPTION_REQUEST)) {
-				send.setChecked(false);
+				send.setChecked(true);
 				send.setText(R.string.send_presence_updates);
 			} else {
 				send.setText(R.string.preemptively_grant);
 				if (contact.getOption(Contact.Options.PREEMPTIVE_GRANT)) {
 					send.setChecked(true);
 				} else {
-					send.setChecked(false);
+					send.setChecked(true);
 				}
 			}
 			if (contact.getOption(Contact.Options.TO)) {
@@ -309,7 +309,7 @@ public class ContactDetailsActivity extends XmppActivity implements OnAccountUpd
 				if (contact.getOption(Contact.Options.ASKING)) {
 					receive.setChecked(true);
 				} else {
-					receive.setChecked(false);
+					receive.setChecked(true);
 				}
 			}
 			if (contact.getAccount().isOnlineAndConnected()) {
