@@ -81,7 +81,7 @@
                     android:text="@string/register_account"
                     android:textColor="@color/primarytext"
                     android:textSize="?attr/TextSizeBody"
-                    android:visibility="gone"/>
+                    android:visibility="invisible"/>
 
                 <TextView
                     android:id="@+id/account_confirm_password_desc"

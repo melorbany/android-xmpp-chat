@@ -1636,18 +1636,18 @@ public class XmppConnectionService extends Service implements OnPhoneContactsLoa
 						public void onIqPacketReceived(Account account, IqPacket packet) {
 							if (packet.getType() == IqPacket.TYPE.RESULT) {
 								if (callback != null) {
-									callback.onPushSucceeded();
+									//callback.onPushSucceeded();
 								}
 							} else {
 								if (callback != null) {
-									callback.onPushFailed();
+									//callback.onPushFailed();
 								}
 							}
 						}
 					});
 				} else {
 					if (callback != null) {
-						callback.onPushFailed();
+						//callback.onPushFailed();
 					}
 				}
 			}

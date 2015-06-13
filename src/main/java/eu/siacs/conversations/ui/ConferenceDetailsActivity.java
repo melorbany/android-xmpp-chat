@@ -49,6 +49,14 @@ public class ConferenceDetailsActivity extends XmppActivity implements OnConvers
 
 		@Override
 		public void onClick(View v) {
+            Bundle options = new Bundle();
+            options.putString("muc#roomconfig_membersonly", true ? "1" : "0");
+            options.putString("muc#roomconfig_whois", true ? "anyone" : "moderators");
+            options.putString("muc#roomconfig_persistentroom", "1");
+            xmppConnectionService.pushConferenceConfiguration(mConversation,
+                    options,
+                    ConferenceDetailsActivity.this);
+
 			inviteToConversation(mConversation);
 		}
 	};

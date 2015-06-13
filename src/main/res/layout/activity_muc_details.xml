@@ -79,7 +79,7 @@
 					android:src="?attr/icon_edit_dark"/>
 			</RelativeLayout>
 
-			<RelativeLayout
+			<RelativeLayout android:visibility="invisible"
 				android:layout_width="fill_parent"
 				android:layout_height="wrap_content">
 				<TextView
