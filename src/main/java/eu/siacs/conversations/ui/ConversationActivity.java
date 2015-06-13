@@ -596,6 +596,11 @@ public class ConversationActivity extends XmppActivity
 				case R.id.action_unblock:
 					BlockContactDialog.show(this, xmppConnectionService, getSelectedConversation());
 					break;
+                case R.id.open_media_ticket:
+                    Intent launchIntent = getPackageManager().getLaunchIntentForPackage("com.ticket.media");
+                    startActivity(launchIntent);
+                    break;
+
 				default:
 					break;
 			}

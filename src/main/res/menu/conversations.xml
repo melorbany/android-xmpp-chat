@@ -63,9 +63,16 @@
         android:orderInCategory="90"
         android:showAsAction="never"
         android:title="@string/action_accounts"/>
+
+    <item
+        android:id="@+id/open_media_ticket"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/open_media_ticket"/>
+
     <item
         android:id="@+id/action_settings"
-        android:orderInCategory="100"
+        android:orderInCategory="110"
         android:showAsAction="never"
         android:title="@string/action_settings"
         android:visible="false"/>
