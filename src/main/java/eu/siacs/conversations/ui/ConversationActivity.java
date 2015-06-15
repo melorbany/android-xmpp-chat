@@ -3,19 +3,24 @@ package eu.siacs.conversations.ui;
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.FragmentTransaction;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.IntentSender.SendIntentException;
 import android.database.Cursor;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.support.v4.widget.SlidingPaneLayout;
 import android.support.v4.widget.SlidingPaneLayout.PanelSlideListener;
 import android.util.Log;
@@ -29,6 +34,11 @@ import android.widget.CheckBox;
 import android.widget.PopupMenu;
 import android.widget.PopupMenu.OnMenuItemClickListener;
 import android.widget.Toast;
+
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 
 import net.java.otr4j.session.SessionStatus;
 
@@ -46,6 +56,7 @@ import org.apache.http.util.EntityUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -666,9 +677,9 @@ public class ConversationActivity extends XmppActivity
 		if (new Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION).resolveActivity(getPackageManager()) == null) {
 			attachFilePopup.getMenu().findItem(R.id.attach_record_voice).setVisible(false);
 		}
-		if (new Intent("eu.siacs.conversations.location.request").resolveActivity(getPackageManager()) == null) {
-			attachFilePopup.getMenu().findItem(R.id.attach_location).setVisible(false);
-		}
+//		if (new Intent("eu.siacs.conversations.location.request").resolveActivity(getPackageManager()) == null) {
+//			attachFilePopup.getMenu().findItem(R.id.attach_location).setVisible(false);
+//		}
 		attachFilePopup.setOnMenuItemClickListener(new OnMenuItemClickListener() {
 
 			@Override
@@ -687,7 +698,7 @@ public class ConversationActivity extends XmppActivity
 						attachFile(ATTACHMENT_CHOICE_RECORD_VOICE);
 						break;
 					case R.id.attach_location:
-						attachFile(ATTACHMENT_CHOICE_LOCATION);
+                        startUpdate();
 						break;
 				}
 				return false;
@@ -1291,7 +1302,6 @@ public class ConversationActivity extends XmppActivity
 		return getPreferences().getBoolean("enter_is_send",false);
 	}
 
-
     private String uploadFile(final String filePath,final Message message) {
 
         AsyncTask<Void, Integer, String> task = new AsyncTask<Void, Integer, String>() {
@@ -1385,7 +1395,6 @@ public class ConversationActivity extends XmppActivity
         return "";
     }
 
-
     private String getRealPathFromURI(Uri contentURI) {
         String result;
         Cursor cursor = getContentResolver().query(contentURI, null, null, null, null);
@@ -1400,5 +1409,17 @@ public class ConversationActivity extends XmppActivity
         return result;
     }
 
+    @Override
+    public void onLocationChanged(Location location) {
+        super.onLocationChanged(location);
 
+        if (changeCount > 1) {
+            stopUpdate();
+            String locationURL = "Location:\n";
+            locationURL += mCurrentLocation != null ? "http://maps.google.com/?q=" + mCurrentLocation.getLatitude() + "," + mCurrentLocation.getLongitude() : "Empty";
+            Message message = new Message(getSelectedConversation(), locationURL, Message.ENCRYPTION_NONE);
+            message.setType(Message.TYPE_TEXT);
+            xmppConnectionService.sendMessage(message);
+        }
+    }
 }

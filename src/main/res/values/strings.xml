@@ -159,7 +159,7 @@
 	<string name="mgmt_account_edit">Edit account</string>
 	<string name="mgmt_account_delete">Delete account</string>
 	<string name="mgmt_account_disable">Temporarily disable</string>
-	<string name="mgmt_account_publish_avatar">Publish avatar</string>
+	<string name="mgmt_account_publish_avatar">Publish profile picture</string>
 	<string name="mgmt_account_publish_pgp">Publish OpenPGP public key</string>
 	<string name="mgmt_account_enable">Enable account</string>
 	<string name="mgmt_account_are_you_sure">Are you sure?</string>
@@ -234,14 +234,14 @@
 	<string name="add_back">Add back</string>
 	<string name="contact_has_read_up_to_this_point">%s has read up to this point</string>
 	<string name="publish">Publish</string>
-	<string name="touch_to_choose_picture">Touch avatar to select picture from gallery</string>
+	<string name="touch_to_choose_picture">Touch profile picture to select picture from gallery</string>
 	<string name="publish_avatar_explanation">Please note: Everyone subscribed to your presence updates will be allowed to see this picture.</string>
 	<string name="publishing">Publishing…</string>
 	<string name="error_publish_avatar_server_reject">The server rejected your publication</string>
 	<string name="error_publish_avatar_converting">Something went wrong while converting your picture</string>
-	<string name="error_saving_avatar">Could not save avatar to disk</string>
+	<string name="error_saving_avatar">Could not save profile picture to disk</string>
 	<string name="or_long_press_for_default">(Or long press to bring back default)</string>
-	<string name="error_publish_avatar_no_server_support">Your server does not support the publication of avatars</string>
+	<string name="error_publish_avatar_no_server_support">Your server does not support the publication of profile pictures</string>
 	<string name="private_message">whispered</string>
 	<string name="private_message_to">to %s</string>
 	<string name="send_private_message_to">Send private message to %s</string>
@@ -379,7 +379,7 @@
 	<string name="conference_created">Conference created!</string>
 	<string name="secret_accepted">Secret accepted!</string>
 	<string name="reset">Reset</string>
-	<string name="account_image_description">Account avatar</string>
+	<string name="account_image_description">Account profile picture</string>
 	<string name="copy_otr_clipboard_description">Copy OTR fingerprint to clipboard</string>
 	<string name="fetching_history_from_server">Fetching history from server</string>
 	<string name="no_more_history_on_server">No more history on server</string>
@@ -442,7 +442,7 @@
 	<string name="received_x_file">Received %s</string>
 	<string name="disable_foreground_service">Disable foreground service</string>
 	<string name="touch_to_open_conversations">Touch to open InMessenger</string>
-	<string name="avatar_has_been_published">Avatar has been published!</string>
+	<string name="avatar_has_been_published">Profile picture has been published!</string>
 	<string name="sending_x_file">Sending %s</string>
 	<string name="offering_x_file">Offering %s</string>
 	<string name="hide_offline">Hide offline</string>
