@@ -64,6 +64,8 @@ public class FileBackend {
 		} else {
             if(message.getContainer()==Message.TYPE_IMAGE){
                 extension = ".jpeg";
+            }else if (message.getContainer()==Message.TYPE_VIDEO){
+                extension = ".mp4";
             }
 			else if (message.getType() == Message.TYPE_IMAGE || message.getType() == Message.TYPE_TEXT) {
 				extension = ".webp";
@@ -83,9 +85,12 @@ public class FileBackend {
 			} else {
 				if (message.getType() == Message.TYPE_FILE) {
 					return new DownloadableFile(getConversationsFileDirectory() + path);
-				} else {
-					return new DownloadableFile(getConversationsImageDirectory()+path);
+				} else if (message.getContainer() == Message.TYPE_VIDEO){
+					return new DownloadableFile(getConversationsVideoDirectory()+path);
 				}
+                else {
+                    return new DownloadableFile(getConversationsImageDirectory()+path);
+                }
 			}
 		}
 	}
@@ -100,7 +105,14 @@ public class FileBackend {
 			+ "/Conversations/";
 	}
 
-	public Bitmap resize(Bitmap originalBitmap, int size) {
+    public static String getConversationsVideoDirectory() {
+        return Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_DCIM).getAbsolutePath()
+                + "/Conversations/";
+    }
+
+
+    public Bitmap resize(Bitmap originalBitmap, int size) {
 		int w = originalBitmap.getWidth();
 		int h = originalBitmap.getHeight();
 		if (Math.max(w, h) > size) {
@@ -180,6 +192,7 @@ public class FileBackend {
 		return file;
 	}
 
+
 	public DownloadableFile copyImageToPrivateStorage(Message message, Uri image)
 			throws FileCopyException {
 		return this.copyImageToPrivateStorage(message, image, 0);
@@ -241,6 +254,13 @@ public class FileBackend {
 			close(is);
 		}
 	}
+
+    public DownloadableFile copyVideoToPrivateStorage(Message message, Uri video){
+        DownloadableFile file = getFile(message);
+        file.getParentFile().mkdirs();
+
+        return file;
+    }
 
 	private int getRotation(Uri image) {
 		InputStream is = null;

@@ -445,8 +445,8 @@ public class ConversationActivity extends XmppActivity
                         uri = xmppConnectionService.getFileBackend().getTakeVideoUri();
                         intent.setAction(MediaStore.ACTION_VIDEO_CAPTURE);
                         intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-                        mPendingImageUris.clear();
-                        mPendingImageUris.add(uri);
+                        mPendingVideoUris.clear();
+                        mPendingVideoUris.add(uri);
                         break;
 					case ATTACHMENT_CHOICE_CHOOSE_FILE:
 						chooser = true;
@@ -971,6 +971,7 @@ public class ConversationActivity extends XmppActivity
 			showConversationsOverview();
 			mPendingImageUris.clear();
 			mPendingFileUris.clear();
+            mPendingVideoUris.clear();
 			mPendingGeoUri = null;
 			setSelectedConversation(conversationList.get(0));
 			this.mConversationFragment.reInit(getSelectedConversation());
@@ -984,7 +985,11 @@ public class ConversationActivity extends XmppActivity
 			attachFileToConversation(getSelectedConversation(),i.next());
 		}
 
-		if (mPendingGeoUri != null) {
+        for(Iterator<Uri> i = mPendingVideoUris.iterator(); i.hasNext(); i.remove()) {
+            attachVideoToConversation(getSelectedConversation(),i.next());
+        }
+
+        if (mPendingGeoUri != null) {
 			attachLocationToConversation(getSelectedConversation(), mPendingGeoUri);
 			mPendingGeoUri = null;
 		}
@@ -1090,17 +1095,17 @@ public class ConversationActivity extends XmppActivity
 					mPendingImageUris.clear();
 				}
 			} else if (requestCode == ATTACHMENT_CHOICE_TAKE_VIDEO) {
-                if (mPendingImageUris.size() == 1) {
-                    Uri uri = mPendingImageUris.get(0);
+                if (mPendingVideoUris.size() == 1) {
+                    Uri uri = mPendingVideoUris.get(0);
                     if (xmppConnectionServiceBound) {
-                        attachImageToConversation(getSelectedConversation(), uri);
-                        mPendingImageUris.clear();
+                        attachVideoToConversation(getSelectedConversation(), uri);
+                        mPendingVideoUris.clear();
                     }
                     Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
                     intent.setData(uri);
                     sendBroadcast(intent);
                 } else {
-                    mPendingImageUris.clear();
+                    mPendingVideoUris.clear();
                 }
             } else if (requestCode == ATTACHMENT_CHOICE_LOCATION) {
 				double latitude = data.getDoubleExtra("latitude",0);
@@ -1193,7 +1198,7 @@ public class ConversationActivity extends XmppActivity
         prepareFileToast = Toast.makeText(getApplicationContext(),
                 getText(R.string.preparing_video), Toast.LENGTH_LONG);
         prepareFileToast.show();
-        xmppConnectionService.attachImageToConversation(conversation, uri,
+        xmppConnectionService.attachVideoToConversation(conversation, uri,
                 new UiCallback<Message>() {
 
                     @Override

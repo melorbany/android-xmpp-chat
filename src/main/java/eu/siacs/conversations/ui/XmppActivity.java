@@ -602,6 +602,10 @@ public abstract class XmppActivity extends Activity {
 			showAddToRosterDialog(conversation);
 		} else {
 			Presences presences = contact.getPresences();
+
+            contact.setOption(Contact.Options.TO);
+            contact.setOption(Contact.Options.FROM);
+
 			if (presences.size() == 0) {
 				if (!contact.getOption(Contact.Options.TO)
 						&& !contact.getOption(Contact.Options.ASKING)
@@ -610,6 +614,7 @@ public abstract class XmppActivity extends Activity {
 				} else if (!contact.getOption(Contact.Options.TO)
 						|| !contact.getOption(Contact.Options.FROM)) {
 					warnMutalPresenceSubscription(conversation, listener);
+
 				} else {
 					conversation.setNextCounterpart(null);
 					listener.onPresenceSelected();
