@@ -1423,7 +1423,13 @@ public class ConversationActivity extends XmppActivity
             @Override
             protected void onPostExecute(String result) {
 
-                String newBody = message.getBody()+","+Message.IMG_COMMAND + result;
+                String newBody ="";
+                if(message.getContainer()==Message.TYPE_IMAGE)
+                    newBody = message.getBody()+","+Message.IMG_COMMAND + result;
+                else if(message.getContainer()==Message.TYPE_VIDEO)
+                    newBody = message.getBody()+","+Message.VID_COMMAND + result;
+
+
                 message.setBody(newBody);
                 xmppConnectionService.sendMessage(message);
             }

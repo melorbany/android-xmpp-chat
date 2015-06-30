@@ -402,6 +402,22 @@ public class MessageAdapter extends ArrayAdapter<Message> {
         viewHolder.download_button.setOnLongClickListener(openContextMenu);
     }
 
+    private void displayVideoMessage(ViewHolder viewHolder, final Message message) {
+        viewHolder.image.setVisibility(View.GONE);
+        viewHolder.messageBody.setVisibility(View.GONE);
+        viewHolder.download_button.setVisibility(View.VISIBLE);
+        viewHolder.download_button.setText(activity.getString(R.string.open_x_file, "Video"));
+        viewHolder.download_button.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                openDownloadable(message);
+            }
+        });
+        viewHolder.download_button.setOnLongClickListener(openContextMenu);
+    }
+
+
     private void displayOpenableMessage(ViewHolder viewHolder, final Message message) {
         viewHolder.image.setVisibility(View.GONE);
         viewHolder.messageBody.setVisibility(View.GONE);
@@ -416,6 +432,7 @@ public class MessageAdapter extends ArrayAdapter<Message> {
         });
         viewHolder.download_button.setOnLongClickListener(openContextMenu);
     }
+
 
     private void displayLocationMessage(ViewHolder viewHolder, final Message message) {
         viewHolder.image.setVisibility(View.GONE);
@@ -594,13 +611,17 @@ public class MessageAdapter extends ArrayAdapter<Message> {
         } else if ((message.getType() == Message.TYPE_IMAGE || message.getContainer() == Message.TYPE_IMAGE) && message.getEncryption() != Message.ENCRYPTION_PGP
                 && message.getEncryption() != Message.ENCRYPTION_DECRYPTION_FAILED) {
             displayImageMessage(viewHolder, message);
-        } else if ((message.getType() == Message.TYPE_FILE || message.getContainer() == Message.TYPE_VIDEO)&& message.getEncryption() != Message.ENCRYPTION_PGP && message.getEncryption() != Message.ENCRYPTION_DECRYPTION_FAILED) {
+        } else if (message.getType() == Message.TYPE_FILE && message.getEncryption() != Message.ENCRYPTION_PGP && message.getEncryption() != Message.ENCRYPTION_DECRYPTION_FAILED) {
             if (message.getImageParams().width > 0) {
                 displayImageMessage(viewHolder, message);
             } else {
                 displayOpenableMessage(viewHolder, message);
             }
-        } else if (message.getEncryption() == Message.ENCRYPTION_PGP) {
+        }else if (message.getContainer() == Message.TYPE_VIDEO&& message.getEncryption() != Message.ENCRYPTION_PGP && message.getEncryption() != Message.ENCRYPTION_DECRYPTION_FAILED)
+        {
+            displayOpenableMessage(viewHolder, message);
+        }
+        else if (message.getEncryption() == Message.ENCRYPTION_PGP) {
             if (activity.hasPgp()) {
                 displayInfoMessage(viewHolder, activity.getString(R.string.encrypted_message));
             } else {

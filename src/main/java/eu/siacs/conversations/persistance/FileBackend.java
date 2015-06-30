@@ -162,9 +162,16 @@ public class FileBackend {
 
 	public DownloadableFile copyFileToPrivateStorage(Message message, Uri uri) throws FileCopyException {
 		Log.d(Config.LOGTAG, "copy " + uri.toString() + " to private storage");
-		String mime = mXmppConnectionService.getContentResolver().getType(uri);
-		String extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(mime);
-		message.setRelativeFilePath(message.getUuid() + "." + extension);
+
+        if(message.getContainer()== Message.TYPE_VIDEO) {
+            message.setRelativeFilePath(message.getUuid() + ".mp4");
+        }
+        else {
+            String mime = mXmppConnectionService.getContentResolver().getType(uri);
+            String extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(mime);
+            message.setRelativeFilePath(message.getUuid() + "." + extension);
+        }
+
 		DownloadableFile file = mXmppConnectionService.getFileBackend().getFile(message);
 		file.getParentFile().mkdirs();
 		OutputStream os = null;
