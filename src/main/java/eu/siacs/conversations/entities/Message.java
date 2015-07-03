@@ -57,8 +57,8 @@ public class Message extends AbstractEntity {
 	public static final String ME_COMMAND = "/me ";
     public static final String IMG_COMMAND = "/img ";
     public static final String VID_COMMAND = "/vid ";
-    public static final String FILE_UPLOAD_URL = "http://192.168.2.27:8000/api/v1/new";
-    public static final String FILE_DOWNLOAD_URL = "http://192.168.2.27:8000/files/";
+    public static final String FILE_UPLOAD_URL = "http://178.62.223.220/api/v1/new"; //192.168.2.27
+    public static final String FILE_DOWNLOAD_URL = "http://178.62.223.220/files/";
 
 
 
