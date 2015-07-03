@@ -132,10 +132,15 @@
 	<string name="receive_presence_updates">Receive presence updates</string>
 	<string name="ask_for_presence_updates">Ask for presence updates</string>
 	<string name="attach_choose_picture">Choose picture</string>
+<<<<<<< HEAD
     <string name="open_media_ticket">Media Ticket</string>
+    <string name="attach_take_picture">Take picture</string>
+	<string name="preemptively_grant">Preemptively grant subscription request</string>
+=======
 	<string name="attach_take_picture">Take picture</string>
     <string name="attach_take_video">Take video</string>
-	<string name="preemptively_grant">Preemptively grant subscription request</string>
+    <string name="preemptively_grant">Preemptively grant subscription request</string>
+>>>>>>> feature/Video
 	<string name="error_not_an_image_file">The file you selected is not an image</string>
 	<string name="error_compressing_image">Error while converting the image file</string>
 	<string name="error_file_not_found">File not found</string>

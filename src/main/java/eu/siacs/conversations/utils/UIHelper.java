@@ -1,5 +1,10 @@
 package eu.siacs.conversations.utils;
 
+import android.content.Context;
+import android.text.format.DateFormat;
+import android.text.format.DateUtils;
+import android.util.Pair;
+
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,11 +18,6 @@ import eu.siacs.conversations.entities.Conversation;
 import eu.siacs.conversations.entities.Downloadable;
 import eu.siacs.conversations.entities.Message;
 import eu.siacs.conversations.xmpp.jid.Jid;
-
-import android.content.Context;
-import android.text.format.DateFormat;
-import android.text.format.DateUtils;
-import android.util.Pair;
 
 public class UIHelper {
 
@@ -172,7 +172,7 @@ public class UIHelper {
 			}
 		} else if (message.getEncryption() == Message.ENCRYPTION_PGP) {
 			return new Pair<>(context.getString(R.string.encrypted_message_received),true);
-		} else if (message.getType() == Message.TYPE_FILE || message.getType() == Message.TYPE_IMAGE) {
+		} else if (message.getType() == Message.TYPE_FILE || message.getType() == Message.TYPE_IMAGE || message.getType() == Message.TYPE_VIDEO) {
 			if (message.getStatus() == Message.STATUS_RECEIVED) {
 				return new Pair<>(context.getString(R.string.received_x_file,
 							getFileDescriptionString(context, message)), true);
@@ -198,7 +198,10 @@ public class UIHelper {
 	public static String getFileDescriptionString(final Context context, final Message message) {
 		if (message.getType() == Message.TYPE_IMAGE) {
 			return context.getString(R.string.image);
-		}
+		}else if (message.getType() == Message.TYPE_VIDEO) {
+            return context.getString(R.string.video);
+        }
+
 		final String path = message.getRelativeFilePath();
 		if (path == null) {
 			return "";

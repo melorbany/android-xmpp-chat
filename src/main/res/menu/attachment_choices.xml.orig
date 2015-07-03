@@ -5,10 +5,6 @@
         android:id="@+id/attach_take_picture"
         android:title="@string/attach_take_picture"/>
 
-<item
-        android:id="@+id/attach_location"
-        android:title="@string/send_location"/>
-
     <item
         android:id="@+id/attach_choose_picture"
         android:title="@string/attach_choose_picture"
@@ -19,20 +15,17 @@
         android:title="@string/attach_record_voice"/>
 
     <item
+<<<<<<< HEAD
         android:id="@+id/attach_location"
         android:title="@string/send_location"/>
-
-    <item
-        android:id="@+id/attach_take_picture"
-        android:title="@string/attach_take_picture"/>
-
-    <item
+=======
         android:id="@+id/attach_take_video"
         android:title="@string/attach_take_video"/>
 
     <item
         android:id="@+id/attach_choose_picture"
         android:title="@string/attach_choose_picture"/>
+>>>>>>> feature/Video
 
     <item
         android:id="@+id/attach_choose_file"
