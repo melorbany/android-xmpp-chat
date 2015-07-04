@@ -3,10 +3,8 @@ package eu.siacs.conversations.ui;
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.FragmentTransaction;
 import android.app.PendingIntent;
-import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
@@ -14,13 +12,11 @@ import android.content.Intent;
 import android.content.IntentSender.SendIntentException;
 import android.database.Cursor;
 import android.location.Location;
-import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.provider.Settings;
 import android.support.v4.widget.SlidingPaneLayout;
 import android.support.v4.widget.SlidingPaneLayout.PanelSlideListener;
 import android.util.Log;
@@ -34,11 +30,6 @@ import android.widget.CheckBox;
 import android.widget.PopupMenu;
 import android.widget.PopupMenu.OnMenuItemClickListener;
 import android.widget.Toast;
-
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
 
 import net.java.otr4j.session.SessionStatus;
 
@@ -56,7 +47,6 @@ import org.apache.http.util.EntityUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -707,9 +697,6 @@ public class ConversationActivity extends XmppActivity
                     case R.id.attach_take_video:
                         attachFile(ATTACHMENT_CHOICE_TAKE_VIDEO);
                         break;
-					case R.id.attach_choose_file:
-						attachFile(ATTACHMENT_CHOICE_CHOOSE_FILE);
-						break;
 					case R.id.attach_record_voice:
 						attachFile(ATTACHMENT_CHOICE_RECORD_VOICE);
 						break;

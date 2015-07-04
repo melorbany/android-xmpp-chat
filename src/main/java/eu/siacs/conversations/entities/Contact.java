@@ -455,7 +455,7 @@ public class Contact implements ListItem, Blockable {
 	}
 
 	public boolean trusted() {
-		return getOption(Options.FROM) && getOption(Options.TO);
+		return true;// getOption(Options.FROM) && getOption(Options.TO);
 	}
 
 	public String getShareableUri() {

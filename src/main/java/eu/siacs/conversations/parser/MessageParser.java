@@ -634,6 +634,8 @@ public class MessageParser extends AbstractParser implements
 			}
 		}
 		final HttpConnectionManager manager = this.mXmppConnectionService.getHttpConnectionManager();
+
+        //Don't check for trusted user
 		if (message.trusted() && message.bodyContainsDownloadable() && manager.getAutoAcceptFileSize() > 0) {
 			manager.createNewConnection(message);
 		} else if (!message.isRead()) {
