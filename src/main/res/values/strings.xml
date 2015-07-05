@@ -72,6 +72,7 @@
 	<string name="send_failed">delivery failed</string>
 	<string name="send_rejected">rejected</string>
 	<string name="preparing_image">Preparing image for transmission</string>
+    <string name="preparing_video">Preparing video for transmission</string>
 	<string name="action_clear_history">Clear history</string>
 	<string name="clear_conversation_history">Clear Conversation History</string>
 	<string name="clear_histor_msg">Do you want to delete all messages within this Conversation?\n\n<b>Warning:</b> This will not influence messages stored on other devices or servers.</string>
@@ -132,7 +133,8 @@
 	<string name="ask_for_presence_updates">Ask for presence updates</string>
 	<string name="attach_choose_picture">Choose picture</string>
     <string name="open_media_ticket">Media Ticket</string>
-    <string name="attach_take_picture">Take picture</string>
+	<string name="attach_take_picture">Take picture</string>
+    <string name="attach_take_video">Take video</string>
 	<string name="preemptively_grant">Preemptively grant subscription request</string>
 	<string name="error_not_an_image_file">The file you selected is not an image</string>
 	<string name="error_compressing_image">Error while converting the image file</string>

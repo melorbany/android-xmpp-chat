@@ -68,11 +68,23 @@ public class HttpConnection implements Downloadable {
 		try {
 
             String formattedUrl="";
-            String imgParts[] = message.getBody().split(",");
-            if (imgParts.length >3) {
-                formattedUrl = imgParts[3].replaceAll(Message.IMG_COMMAND, "");
+
+            if(message.getContainer() == Message.TYPE_IMAGE) {
+                String imgParts[] = message.getBody().split(",");
+                if (imgParts.length > 3) {
+                    formattedUrl = imgParts[3].replaceAll(Message.IMG_COMMAND, "");
+                } else formattedUrl = imgParts[0].replaceAll(Message.IMG_COMMAND, "");
+
+            }else if(message.getContainer() == Message.TYPE_VIDEO) {
+                String imgParts[] = message.getBody().split(",");
+                if (imgParts.length > 1) {
+                    formattedUrl = imgParts[1].replaceAll(Message.VID_COMMAND, "");
+                } else formattedUrl = imgParts[0].replaceAll(Message.VID_COMMAND, "");
             }
-            else  formattedUrl = imgParts[0].replaceAll(Message.IMG_COMMAND, "");
+
+
+
+
 
             formattedUrl = Message.FILE_DOWNLOAD_URL + formattedUrl;
 			mUrl = new URL(formattedUrl);
@@ -279,7 +291,7 @@ public class HttpConnection implements Downloadable {
 		}
 
 		private void updateImageBounds() {
-			message.setType(Message.TYPE_IMAGE);
+			//message.setType(Message.TYPE_IMAGE);
 			mXmppConnectionService.getFileBackend().updateFileParams(message,mUrl);
 			mXmppConnectionService.updateMessage(message);
 		}

@@ -39,6 +39,7 @@ public class Message extends AbstractEntity {
 	public static final int TYPE_FILE = 2;
 	public static final int TYPE_STATUS = 3;
 	public static final int TYPE_PRIVATE = 4;
+    public static final int TYPE_VIDEO = 5;
 
 	public static final String CONVERSATION = "conversationUuid";
 	public static final String COUNTERPART = "counterpart";
@@ -55,7 +56,8 @@ public class Message extends AbstractEntity {
 	public static final String RELATIVE_FILE_PATH = "relativeFilePath";
 	public static final String ME_COMMAND = "/me ";
     public static final String IMG_COMMAND = "/img ";
-    public static final String FILE_UPLOAD_URL = "http://178.62.223.220/api/v1/new";
+    public static final String VID_COMMAND = "/vid ";
+    public static final String FILE_UPLOAD_URL = "http://178.62.223.220/api/v1/new"; //192.168.2.27
     public static final String FILE_DOWNLOAD_URL = "http://178.62.223.220/files/";
 
 
@@ -482,6 +484,12 @@ public class Message extends AbstractEntity {
 
         if (body.trim().contains(IMG_COMMAND)) {
             setType(TYPE_IMAGE);
+            setContainer(TYPE_IMAGE);
+            return true;
+        }
+        else if (body.trim().contains(VID_COMMAND)) {
+            setType(TYPE_VIDEO);
+            setContainer(TYPE_VIDEO);
             return true;
         }
 		else if (body.trim().contains(" ")) {

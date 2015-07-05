@@ -64,6 +64,8 @@ public class FileBackend {
 		} else {
             if(message.getContainer()==Message.TYPE_IMAGE){
                 extension = ".jpeg";
+            }else if (message.getContainer()==Message.TYPE_VIDEO){
+                extension = ".mp4";
             }
 			else if (message.getType() == Message.TYPE_IMAGE || message.getType() == Message.TYPE_TEXT) {
 				extension = ".webp";
@@ -83,9 +85,12 @@ public class FileBackend {
 			} else {
 				if (message.getType() == Message.TYPE_FILE) {
 					return new DownloadableFile(getConversationsFileDirectory() + path);
-				} else {
-					return new DownloadableFile(getConversationsImageDirectory()+path);
+				} else if (message.getContainer() == Message.TYPE_VIDEO){
+					return new DownloadableFile(getConversationsVideoDirectory()+path);
 				}
+                else {
+                    return new DownloadableFile(getConversationsImageDirectory()+path);
+                }
 			}
 		}
 	}
@@ -100,7 +105,14 @@ public class FileBackend {
 			+ "/Conversations/";
 	}
 
-	public Bitmap resize(Bitmap originalBitmap, int size) {
+    public static String getConversationsVideoDirectory() {
+        return Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_DCIM).getAbsolutePath()
+                + "/Conversations/";
+    }
+
+
+    public Bitmap resize(Bitmap originalBitmap, int size) {
 		int w = originalBitmap.getWidth();
 		int h = originalBitmap.getHeight();
 		if (Math.max(w, h) > size) {
@@ -150,9 +162,16 @@ public class FileBackend {
 
 	public DownloadableFile copyFileToPrivateStorage(Message message, Uri uri) throws FileCopyException {
 		Log.d(Config.LOGTAG, "copy " + uri.toString() + " to private storage");
-		String mime = mXmppConnectionService.getContentResolver().getType(uri);
-		String extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(mime);
-		message.setRelativeFilePath(message.getUuid() + "." + extension);
+
+        if(message.getContainer()== Message.TYPE_VIDEO) {
+            message.setRelativeFilePath(message.getUuid() + ".mp4");
+        }
+        else {
+            String mime = mXmppConnectionService.getContentResolver().getType(uri);
+            String extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(mime);
+            message.setRelativeFilePath(message.getUuid() + "." + extension);
+        }
+
 		DownloadableFile file = mXmppConnectionService.getFileBackend().getFile(message);
 		file.getParentFile().mkdirs();
 		OutputStream os = null;
@@ -179,6 +198,7 @@ public class FileBackend {
 		Log.d(Config.LOGTAG, "output file name " + mXmppConnectionService.getFileBackend().getFile(message));
 		return file;
 	}
+
 
 	public DownloadableFile copyImageToPrivateStorage(Message message, Uri image)
 			throws FileCopyException {
@@ -242,6 +262,13 @@ public class FileBackend {
 		}
 	}
 
+    public DownloadableFile copyVideoToPrivateStorage(Message message, Uri video){
+        DownloadableFile file = getFile(message);
+        file.getParentFile().mkdirs();
+
+        return file;
+    }
+
 	private int getRotation(Uri image) {
 		InputStream is = null;
 		try {
@@ -286,7 +313,21 @@ public class FileBackend {
 		return uri;
 	}
 
-	public Avatar getPepAvatar(Uri image, int size, Bitmap.CompressFormat format) {
+    public Uri getTakeVideoUri() {
+        StringBuilder pathBuilder = new StringBuilder();
+        pathBuilder.append(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM));
+        pathBuilder.append('/');
+        pathBuilder.append("Camera");
+        pathBuilder.append('/');
+        pathBuilder.append("VID_" + this.imageDateFormat.format(new Date()) + ".mp4");
+        Uri uri = Uri.parse("file://" + pathBuilder.toString());
+        File file = new File(uri.toString());
+        file.getParentFile().mkdirs();
+        return uri;
+    }
+
+
+    public Avatar getPepAvatar(Uri image, int size, Bitmap.CompressFormat format) {
 		try {
 			Avatar avatar = new Avatar();
 			Bitmap bm = cropCenterSquare(image, size);

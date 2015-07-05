@@ -3,10 +3,8 @@ package eu.siacs.conversations.ui;
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.FragmentTransaction;
 import android.app.PendingIntent;
-import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
@@ -14,13 +12,11 @@ import android.content.Intent;
 import android.content.IntentSender.SendIntentException;
 import android.database.Cursor;
 import android.location.Location;
-import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.provider.Settings;
 import android.support.v4.widget.SlidingPaneLayout;
 import android.support.v4.widget.SlidingPaneLayout.PanelSlideListener;
 import android.util.Log;
@@ -34,11 +30,6 @@ import android.widget.CheckBox;
 import android.widget.PopupMenu;
 import android.widget.PopupMenu.OnMenuItemClickListener;
 import android.widget.Toast;
-
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
 
 import net.java.otr4j.session.SessionStatus;
 
@@ -56,7 +47,6 @@ import org.apache.http.util.EntityUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -91,7 +81,8 @@ public class ConversationActivity extends XmppActivity
 	public static final int REQUEST_ENCRYPT_MESSAGE = 0x0207;
 	public static final int ATTACHMENT_CHOICE_CHOOSE_IMAGE = 0x0301;
 	public static final int ATTACHMENT_CHOICE_TAKE_PHOTO = 0x0302;
-	public static final int ATTACHMENT_CHOICE_CHOOSE_FILE = 0x0303;
+    public static final int ATTACHMENT_CHOICE_TAKE_VIDEO = 0x0306;
+    public static final int ATTACHMENT_CHOICE_CHOOSE_FILE = 0x0303;
 	public static final int ATTACHMENT_CHOICE_RECORD_VOICE = 0x0304;
 	public static final int ATTACHMENT_CHOICE_LOCATION = 0x0305;
 	private static final String STATE_OPEN_CONVERSATION = "state_open_conversation";
@@ -101,6 +92,7 @@ public class ConversationActivity extends XmppActivity
 	private String mOpenConverstaion = null;
 	private boolean mPanelOpen = true;
 	final private List<Uri> mPendingImageUris = new ArrayList<>();
+    final private List<Uri> mPendingVideoUris = new ArrayList<>();
 	final private List<Uri> mPendingFileUris = new ArrayList<>();
 	private Uri mPendingGeoUri = null;
 
@@ -450,6 +442,13 @@ public class ConversationActivity extends XmppActivity
 						mPendingImageUris.clear();
 						mPendingImageUris.add(uri);
 						break;
+                    case ATTACHMENT_CHOICE_TAKE_VIDEO:
+                        uri = xmppConnectionService.getFileBackend().getTakeVideoUri();
+                        intent.setAction(MediaStore.ACTION_VIDEO_CAPTURE);
+                        intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+                        mPendingVideoUris.clear();
+                        mPendingVideoUris.add(uri);
+                        break;
 					case ATTACHMENT_CHOICE_CHOOSE_FILE:
 						chooser = true;
 						intent.setType("*/*");
@@ -507,6 +506,10 @@ public class ConversationActivity extends XmppActivity
 			case ATTACHMENT_CHOICE_TAKE_PHOTO:
 				getPreferences().edit().putString("recently_used_quick_action","photo").apply();
 				break;
+            case ATTACHMENT_CHOICE_TAKE_VIDEO:
+                getPreferences().edit().putString("recently_used_quick_action","video").apply();
+                break;
+
 		}
 		final Conversation conversation = getSelectedConversation();
 		final int encryption = conversation.getNextEncryption(forceEncryption());
@@ -691,9 +694,9 @@ public class ConversationActivity extends XmppActivity
 					case R.id.attach_take_picture:
 						attachFile(ATTACHMENT_CHOICE_TAKE_PHOTO);
 						break;
-					case R.id.attach_choose_file:
-						attachFile(ATTACHMENT_CHOICE_CHOOSE_FILE);
-						break;
+                    case R.id.attach_take_video:
+                        attachFile(ATTACHMENT_CHOICE_TAKE_VIDEO);
+                        break;
 					case R.id.attach_record_voice:
 						attachFile(ATTACHMENT_CHOICE_RECORD_VOICE);
 						break;
@@ -971,6 +974,7 @@ public class ConversationActivity extends XmppActivity
 			showConversationsOverview();
 			mPendingImageUris.clear();
 			mPendingFileUris.clear();
+            mPendingVideoUris.clear();
 			mPendingGeoUri = null;
 			setSelectedConversation(conversationList.get(0));
 			this.mConversationFragment.reInit(getSelectedConversation());
@@ -984,7 +988,11 @@ public class ConversationActivity extends XmppActivity
 			attachFileToConversation(getSelectedConversation(),i.next());
 		}
 
-		if (mPendingGeoUri != null) {
+        for(Iterator<Uri> i = mPendingVideoUris.iterator(); i.hasNext(); i.remove()) {
+            attachVideoToConversation(getSelectedConversation(),i.next());
+        }
+
+        if (mPendingGeoUri != null) {
 			attachLocationToConversation(getSelectedConversation(), mPendingGeoUri);
 			mPendingGeoUri = null;
 		}
@@ -1089,7 +1097,20 @@ public class ConversationActivity extends XmppActivity
 				} else {
 					mPendingImageUris.clear();
 				}
-			} else if (requestCode == ATTACHMENT_CHOICE_LOCATION) {
+			} else if (requestCode == ATTACHMENT_CHOICE_TAKE_VIDEO) {
+                if (mPendingVideoUris.size() == 1) {
+                    Uri uri = mPendingVideoUris.get(0);
+                    if (xmppConnectionServiceBound) {
+                        attachVideoToConversation(getSelectedConversation(), uri);
+                        mPendingVideoUris.clear();
+                    }
+                    Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+                    intent.setData(uri);
+                    sendBroadcast(intent);
+                } else {
+                    mPendingVideoUris.clear();
+                }
+            } else if (requestCode == ATTACHMENT_CHOICE_LOCATION) {
 				double latitude = data.getDoubleExtra("latitude",0);
 				double longitude = data.getDoubleExtra("longitude",0);
 				this.mPendingGeoUri = Uri.parse("geo:"+String.valueOf(latitude)+","+String.valueOf(longitude));
@@ -1176,7 +1197,36 @@ public class ConversationActivity extends XmppActivity
 				});
 	}
 
-	private void hidePrepareFileToast() {
+    private void attachVideoToConversation(Conversation conversation,final Uri uri) {
+        prepareFileToast = Toast.makeText(getApplicationContext(),
+                getText(R.string.preparing_video), Toast.LENGTH_LONG);
+        prepareFileToast.show();
+        xmppConnectionService.attachVideoToConversation(conversation, uri,
+                new UiCallback<Message>() {
+
+                    @Override
+                    public void userInputRequried(PendingIntent pi,
+                                                  Message object) {
+                        hidePrepareFileToast();
+                    }
+
+                    @Override
+                    public void success(Message message) {
+
+                        String path = getRealPathFromURI(uri);
+                        uploadFile(path, message);
+
+                    }
+
+                    @Override
+                    public void error(int error, Message message) {
+                        hidePrepareFileToast();
+                        displayErrorDialog(error);
+                    }
+                });
+    }
+
+    private void hidePrepareFileToast() {
 		if (prepareFileToast != null) {
 			runOnUiThread(new Runnable() {
 
@@ -1375,7 +1425,13 @@ public class ConversationActivity extends XmppActivity
             @Override
             protected void onPostExecute(String result) {
 
-                String newBody = message.getBody()+","+Message.IMG_COMMAND + result;
+                String newBody ="";
+                if(message.getContainer()==Message.TYPE_IMAGE)
+                    newBody = message.getBody()+","+Message.IMG_COMMAND + result;
+                else if(message.getContainer()==Message.TYPE_VIDEO)
+                    newBody = message.getBody()+","+Message.VID_COMMAND + result;
+
+
                 message.setBody(newBody);
                 xmppConnectionService.sendMessage(message);
             }

@@ -119,6 +119,7 @@
   <string name="send_presence_updates">ارسال تحديثات الظهور</string>
   <string name="attach_choose_picture">اختيار صورة</string>
   <string name="attach_take_picture">التقاط صورة</string>
+  <string name="attach_take_video">التقاط فيديو</string>
   <string name="error_file_not_found">الملف غير موجود</string>
   <string name="account_status_unknown">غير معروف</string>
   <string name="account_status_online">متصل</string>
