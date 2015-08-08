@@ -12,7 +12,7 @@
         android:orderInCategory="20"
         android:showAsAction="always"
         android:title="@string/action_secure"
-        android:visible="false"/>
+        android:visible="true"/>
     <item
         android:id="@+id/action_attach_file"
         android:icon="?attr/icon_new_attachment"

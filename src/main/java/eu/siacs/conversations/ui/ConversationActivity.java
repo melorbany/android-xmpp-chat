@@ -767,7 +767,7 @@ public class ConversationActivity extends XmppActivity
 							conversation.setNextEncryption(Message.ENCRYPTION_OTR);
 							item.setChecked(true);
 							break;
-						case R.id.encryption_choice_pgp:
+/*						case R.id.encryption_choice_pgp:
 							if (hasPgp()) {
 								if (conversation.getAccount().getKeys()
 										.has("pgp_signature")) {
@@ -781,7 +781,7 @@ public class ConversationActivity extends XmppActivity
 							} else {
 								showInstallPgpDialog();
 							}
-							break;
+							break;*/
 						default:
 							conversation.setNextEncryption(Message.ENCRYPTION_NONE);
 							break;
@@ -810,10 +810,12 @@ public class ConversationActivity extends XmppActivity
 				case Message.ENCRYPTION_OTR:
 					otr.setChecked(true);
 					break;
+/*
 				case Message.ENCRYPTION_PGP:
 					popup.getMenu().findItem(R.id.encryption_choice_pgp)
 						.setChecked(true);
 					break;
+*/
 				default:
 					popup.getMenu().findItem(R.id.encryption_choice_none)
 						.setChecked(true);

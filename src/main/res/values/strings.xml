@@ -80,7 +80,7 @@
 	<string name="also_end_conversation">End this conversations afterwards</string>
 	<string name="choose_presence">Choose presence to contact</string>
 	<string name="send_plain_text_message">Send plain text message</string>
-	<string name="send_otr_message">Send OTR encrypted message</string>
+	<string name="send_otr_message">Send secure message</string>
 	<string name="send_pgp_message">Send OpenPGP encrypted message</string>
 	<string name="your_nick_has_been_changed">Your nickname has been changed</string>
 	<string name="download_image">Download Image</string>
@@ -156,7 +156,7 @@
 	<string name="account_status_security_error">Security error</string>
 	<string name="account_status_incompatible_server">Incompatible server</string>
 	<string name="encryption_choice_none">Plain text</string>
-	<string name="encryption_choice_otr">OTR</string>
+	<string name="encryption_choice_otr">Secure</string>
 	<string name="encryption_choice_pgp">OpenPGP</string>
 	<string name="mgmt_account_edit">Edit account</string>
 	<string name="mgmt_account_delete">Delete account</string>
